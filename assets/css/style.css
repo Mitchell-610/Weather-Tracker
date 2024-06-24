@@ -16,8 +16,11 @@ header {
     font-size: 150%;
 }
 
-.user form {
+#cityName {
     margin-bottom: 10%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
 }
 
 .info {
