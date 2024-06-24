@@ -8,4 +8,9 @@ header {
 .user {
     display: flex;
     flex-direction: column;
+    width: 20%;
+}
+
+.info {
+    width: 70%;
 }
