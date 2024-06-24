@@ -4,3 +4,8 @@ header {
     text-align: center;
     font-size: 150%;
 }
+
+.user {
+    display: flex;
+    flex-direction: column;
+}
