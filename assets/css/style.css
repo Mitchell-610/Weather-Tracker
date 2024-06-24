@@ -16,6 +16,9 @@ header {
     font-size: 150%;
 }
 
+.user form {
+    margin-bottom: 10%;
+}
 
 .info {
     width: 70%;
