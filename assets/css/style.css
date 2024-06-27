@@ -5,6 +5,11 @@ header {
     font-size: 150%;
 }
 
+.content {
+    display: flex;
+    flex-direction: row;
+}
+
 .user {
     display: flex;
     flex-direction: column;
@@ -31,4 +36,6 @@ header {
 
 .info {
     width: 70%;
+    border: 5px solid gray;
+
 }
