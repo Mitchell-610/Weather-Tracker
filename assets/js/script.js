@@ -19,6 +19,10 @@ fetch(urlWithApiKey)
         console.log(city)
         let country = data.city.country
         console.log(country)
+        let www = data.list[(Math.floor(Math.random() * length))]
+        console.log(www)
+        
+
 
 
     })
