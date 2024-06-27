@@ -12,11 +12,17 @@ searchBtn.addEventListener(`click`, function (event) {
 const urlWithApiKey = `${apiUrl}?q=${cityName.value}&appid=${apiKey}`;
 
 fetch(urlWithApiKey)
+    .then(response => response.json())
+    
+    .then(data => {
+        let city = data.city.name
+        console.log(city)
+        let country = data.city.country
+        console.log(country)
 
-    .then(function () {
-        console.log(`Hey`);
-        return;
-    } )
+
+    })
+
 });
 //Fetch the city from the API using attributes(maybe)
 
