@@ -1,1 +1,25 @@
-//api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}
+const apiUrl = `https://api.openweathermap.org/data/2.5/forecast`;
+const apiKey = `da1a0a1cd5ef1413573ed8e0ae798a03`;
+const searchBtn = document.getElementById(`btn`);
+const cityName = document.getElementById('cityName');
+
+
+
+//Make button accessable and save to local storage
+searchBtn.addEventListener(`click`, function (event) {
+    event.preventDefault();
+
+const urlWithApiKey = `${apiUrl}?q=${cityName.value}&appid=${apiKey}`;
+
+fetch(urlWithApiKey)
+
+    .then(function () {
+        console.log(`Hey`);
+        return;
+    } )
+});
+//Fetch the city from the API using attributes(maybe)
+
+//Append the city to the page using attributes
+
+//When new city is created get previous citys from local storage and append them under search bar
