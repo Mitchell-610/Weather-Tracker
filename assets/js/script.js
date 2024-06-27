@@ -22,7 +22,8 @@ fetch(urlWithApiKey)
         let www = data.list[(Math.floor(Math.random() * length))]
         console.log(www)
         
-
+        let temptaure = www.main.temp
+        console.log(temptaure)
 
 
     })
