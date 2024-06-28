@@ -1,7 +1,13 @@
 const apiUrl = `https://api.openweathermap.org/data/2.5/forecast`;
 const apiKey = `da1a0a1cd5ef1413573ed8e0ae798a03`;
 const searchBtn = document.getElementById(`btn`);
+body = document.body;
 const cityName = document.getElementById('cityName');
+const l = document.getElementById('l');
+const date = document.getElementById('date');
+const temp = document.getElementById('temp');
+const winddd = document.getElementById('wind');
+const h = document.getElementById('h');
 
 
 
@@ -20,23 +26,33 @@ fetch(urlWithApiKey)
         let country = data.city.country
         console.log(country)
         let www = data.list[(Math.floor(Math.random() * length))]
-        console.log(www)
         
+
+
         let temptaure = www.main.temp
-        console.log(`The temptaure is: ${temptaure}`)
+        console.log(`The temptaure is: ${temptaure} degrees.`)
 
         let wind = www.wind.speed
-        console.log(`Wind speed is: ${wind}`)
+        console.log(`Wind speed is: ${wind} mph.`)
 
         let humidity = www.main.humidity
         console.log(`The humidity level is: ${humidity} percent.`)
-        
 
 
+        l.append(city)
+
+        temp.textContent = `The temptaure is: ${temptaure}`;
+        temp.append(temptaure)
+
+        winddd.textContent = `Wind speed is: ${wind}`
+        winddd.append(wind)
+
+
+        h.textContent = `The humidity level is: ${humidity} percent.`;
+        h.append(humidity)
     })
 
 });
-//Fetch the city from the API using attributes(maybe)
 
 //Append the city to the page using attributes
 
