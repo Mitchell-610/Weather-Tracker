@@ -23,7 +23,14 @@ fetch(urlWithApiKey)
         console.log(www)
         
         let temptaure = www.main.temp
-        console.log(temptaure)
+        console.log(`The temptaure is: ${temptaure}`)
+
+        let wind = www.wind.speed
+        console.log(`Wind speed is: ${wind}`)
+
+        let humidity = www.main.humidity
+        console.log(`The humidity level is: ${humidity} percent.`)
+        
 
 
     })
