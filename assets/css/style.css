@@ -45,3 +45,9 @@ header {
     flex-direction: row;
     font-size: 150%;
 }
+
+#pastCities{
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+}
