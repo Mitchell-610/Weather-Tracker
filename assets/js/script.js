@@ -4,11 +4,16 @@ const searchBtn = document.getElementById(`btn`);
 body = document.body;
 const cityName = document.getElementById('cityName');
 const l = document.getElementById('l');
-const date = document.getElementById('date');
+const d = document.getElementById('date');
 const temp = document.getElementById('temp');
 const winddd = document.getElementById('wind');
 const h = document.getElementById('h');
 
+const date = new Date();
+let day = date.getDate();
+let month = date.getMonth() + 1;
+let year = date.getFullYear();
+let currentDate = `${day}-${month}-${year}`;
 
 
 //Make button accessable and save to local storage
@@ -39,7 +44,7 @@ fetch(urlWithApiKey)
         console.log(`The humidity level is: ${humidity} percent.`)
 
 
-        l.append(city)
+        l.append(city, ` `, currentDate)
 
         temp.textContent = `The temptaure is: ${temptaure}`;
         temp.append(temptaure)
