@@ -28,7 +28,6 @@ searchBtn.addEventListener('click', function (event) {
     fetch(urlWithApiKey)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
 
             // Clear previous content if needed
             l.textContent = '';
@@ -42,6 +41,7 @@ searchBtn.addEventListener('click', function (event) {
 
             // Extract list of weather data
             let weatherList = data.list;
+            console.log(weatherList);
 
             // Group weather data by date
             let groupedByDate = {};
@@ -54,6 +54,8 @@ searchBtn.addEventListener('click', function (event) {
                 // Format date as YYYY-MM-DD
                 let formattedDate = date.toISOString().split('T')[0];
 
+
+
                 // Check if date already exists in groupedByDate, if not, create new entry
                 if (!groupedByDate[formattedDate]) {
                     groupedByDate[formattedDate] = [];
@@ -62,6 +64,30 @@ searchBtn.addEventListener('click', function (event) {
                 // Push current item to the corresponding date entry
                 groupedByDate[formattedDate].push(item);
             });
+
+            for (let date in groupedByDate) {
+                if (groupedByDate.hasOwnProperty(date)) {
+                    console.log(`Date: ${date}`);
+                    
+                    // Access items array for the current date
+                    let items = groupedByDate[date];
+                    
+            
+                    // Process each item in the items array
+                    items.forEach(item => {
+                        // Perform any operations on each item as needed
+                        console.log(item); // Example: log each item
+                        let temptaure = item.main.temp
+                        console.log(temptaure);
+                        let humidity = item.main.humidity
+                        console.log(humidity);
+                        let wind = item.wind.speed
+                        console.log(wind);
+                    });
+            
+                    console.log('---'); // Separator for clarity
+                }
+            }
 
             // Now groupedByDate is an object where keys are dates and values are arrays of weather data for that date
             console.log(groupedByDate);
@@ -74,6 +100,10 @@ searchBtn.addEventListener('click', function (event) {
         });
 });
 
+
+function createCard () {
+
+};
 
 
 let text = "";
