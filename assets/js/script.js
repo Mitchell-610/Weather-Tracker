@@ -1,117 +1,166 @@
 const apiUrl = `https://api.openweathermap.org/data/2.5/forecast`;
 const apiKey = `da1a0a1cd5ef1413573ed8e0ae798a03`;
-const searchBtn = document.getElementById(`btn`);
-const cityName = document.getElementById('cityName');
-//Location items below
-const l = document.getElementById('l');
-const d = document.getElementById('date');
-const temp = document.getElementById('temp');
-const winddd = document.getElementById('wind');
-const h = document.getElementById('h');
-let pastCities = document.getElementById('pastCities');
-//Golbal arrays
-let cities = [];
-let days = [];
-//Date
-const date = new Date();
-let day = date.getDate();
-let month = date.getMonth() + 1;
-let year = date.getFullYear();
-let currentDate = `${day}-${month}-${year}`;
+let isCelsius = true;
+let searchHistory = [];
 
-
-//Make button accessable and save to local storage
-searchBtn.addEventListener('click', function (event) {
-    event.preventDefault();
-    const urlWithApiKey = `${apiUrl}?q=${cityName.value}&appid=${apiKey}`;
-
-    fetch(urlWithApiKey)
-        .then(response => response.json())
-        .then(data => {
-
-            // Clear previous content if needed
-            l.textContent = '';
-            temp.textContent = '';
-            winddd.textContent = '';
-            h.textContent = '';
-
-            // Extract city name
-            let city = data.city.name;
-            l.append(city, ` `, currentDate);
-
-            // Extract list of weather data
-            let weatherList = data.list;
-            console.log(weatherList);
-
-            // Group weather data by date
-            let groupedByDate = {};
-
-            weatherList.forEach(item => {
-                // Extract date from timestamp (assuming timestamp is in seconds)
-                let timestamp = item.dt;  // UNIX timestamp
-                let date = new Date(timestamp * 1000);  // Convert to milliseconds
-
-                // Format date as YYYY-MM-DD
-                let formattedDate = date.toISOString().split('T')[0];
-
-
-
-                // Check if date already exists in groupedByDate, if not, create new entry
-                if (!groupedByDate[formattedDate]) {
-                    groupedByDate[formattedDate] = [];
-                }
-
-                // Push current item to the corresponding date entry
-                groupedByDate[formattedDate].push(item);
-            });
-
-            for (let date in groupedByDate) {
-                if (groupedByDate.hasOwnProperty(date)) {
-                    console.log(`Date: ${date}`);
-                    
-                    // Access items array for the current date
-                    let items = groupedByDate[date];
-                    
-            
-                    // Process each item in the items array
-                    items.forEach(item => {
-                        // Perform any operations on each item as needed
-                        console.log(item); // Example: log each item
-                        let temptaure = item.main.temp
-                        console.log(temptaure);
-                        let humidity = item.main.humidity
-                        console.log(humidity);
-                        let wind = item.wind.speed
-                        console.log(wind);
-                    });
-            
-                    console.log('---'); // Separator for clarity
-                }
-            }
-
-            // Now groupedByDate is an object where keys are dates and values are arrays of weather data for that date
-            console.log(groupedByDate);
-
-            // Further processing or displaying the grouped data
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            // Handle errors
-        });
+document.addEventListener('DOMContentLoaded', () => {
+    // Hide weather icon initially
+    const weatherIcon = document.getElementById('weather-icon');
+    weatherIcon.style.display = 'none'; 
 });
 
+function getWeather() {
+    const city = document.getElementById('city').value;
 
-function createCard () {
+    if (!city) {
+        alert('Please enter a city');
+        return;
+    }
 
-};
+    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
 
+    fetch(currentWeatherUrl)
+        .then(response => response.json())
+        .then(data => {
+            displayWeather(data);
+            if (!searchHistory.includes(city)) {
+                searchHistory.push(city);
+                updateSearchHistory();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching current weather data:', error);
+            alert('Error fetching current weather data. Please try again.');
+        });
 
-let text = "";
-for (let i = 0; i < cities.length; i++) {
-  text += cities[i] + "<br>";
+    fetch(forecastUrl)
+        .then(response => response.json())
+        .then(data => {
+            displayForecast(data);
+        })
+        .catch(error => {
+            console.error('Error fetching forecast data:', error);
+            alert('Error fetching forecast data. Please try again.');
+        });
+}
 
-let ele = pastCities.createElement(`p`);
-ele.append(ele)
-};//Append the city to the page using attributes
+function displayWeather(data) {
+    const weatherInfoDiv = document.getElementById('weather-info');
+    const weatherIcon = document.getElementById('weather-icon');
 
-//When new city is created get previous citys from local storage and append them under search bar
+    weatherInfoDiv.innerHTML = '';
+    if (data.cod === '404') {
+        weatherInfoDiv.innerHTML = `<p>${data.message}</p>`;
+    } else {
+        const cityName = data.name;
+        const date = new Date().toLocaleDateString();
+        let temperature = data.main.temp - 273.15;
+        if (!isCelsius) {
+            temperature = (temperature * 9 / 5) + 32;
+        }
+        const temperatureUnit = isCelsius ? '°C' : '°F';
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
+        const description = data.weather[0].description;
+        const iconCode = data.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+
+        weatherIcon.src = iconUrl;
+        weatherIcon.alt = description;
+
+        weatherInfoDiv.innerHTML = `
+            <h3>${cityName} (${date})</h3>
+            <img src="${iconUrl}" alt="${description}">
+            <p>${Math.round(temperature)}${temperatureUnit}</p>
+            <p>Humidity: ${humidity}%</p>
+            <p>Wind Speed: ${windSpeed} m/s</p>
+            <p>${description}</p>
+        `;
+    }
+}
+
+function displayForecast(data) {
+    const forecastDiv = document.getElementById('forecast-data');
+    forecastDiv.innerHTML = '';
+
+    // Filter and display each day's forecast
+    const dailyForecasts = getDailyForecasts(data.list);
+
+    dailyForecasts.forEach(forecast => {
+        const date = new Date(forecast.date).toLocaleDateString();
+        const temperature = isCelsius ? `${Math.round(forecast.temp)}°C` : `${Math.round(forecast.temp * 9 / 5 + 32)}°F`;
+        const humidity = `${forecast.humidity}%`;
+        const windSpeed = `${forecast.windSpeed} m/s`;
+        const description = forecast.description;
+        const iconUrl = `https://openweathermap.org/img/wn/${forecast.icon}.png`;
+
+        forecastDiv.innerHTML += `
+            <div class="forecast-item">
+                <h4>${date}</h4>
+                <img src="${iconUrl}" alt="${description}">
+                <p>Temperature: ${temperature}</p>
+                <p>Humidity: ${humidity}</p>
+                <p>Wind Speed: ${windSpeed}</p>
+                <p>${description}</p>
+            </div>
+        `;
+    });
+}
+
+function getDailyForecasts(data) {
+    const dailyForecasts = [];
+    const days = {};
+
+    data.forEach(item => {
+        const date = item.dt_txt.split(' ')[0]; 
+        if (!days[date]) {
+            days[date] = {
+                date: item.dt_txt,
+                temp: item.main.temp - 273.15, 
+                humidity: item.main.humidity,
+                windSpeed: item.wind.speed,
+                description: item.weather[0].description,
+                icon: item.weather[0].icon
+            };
+        } else {
+            // Update the daily forecast if a later entry for the same day is found
+            if (item.main.temp - 273.15 > days[date].temp) {
+                days[date].temp = item.main.temp - 273.15;
+                days[date].humidity = item.main.humidity;
+                days[date].windSpeed = item.wind.speed;
+                days[date].description = item.weather[0].description;
+                days[date].icon = item.weather[0].icon;
+            }
+        }
+    });
+
+    // Convert days object to array 
+    for (const key in days) {
+        dailyForecasts.push(days[key]);
+    }
+    // Return only the next 5 days 
+    return dailyForecasts.slice(0, 5); 
+}
+
+function toggleTemperatureUnit() {
+    isCelsius = !isCelsius;
+    getWeather();
+}
+
+function updateSearchHistory() {
+    const searchHistoryDiv = document.getElementById('search-history');
+    searchHistoryDiv.innerHTML = '<h3>Search History</h3>';
+
+    searchHistory.forEach(city => {
+        const cityBtn = document.createElement('button');
+        cityBtn.textContent = city;
+        cityBtn.onclick = () => {
+            document.getElementById('city').value = city;
+            getWeather();
+        };
+        searchHistoryDiv.appendChild(cityBtn);
+    });
+}
+
+document.getElementById('toggle-temp-unit').addEventListener('click', toggleTemperatureUnit);
